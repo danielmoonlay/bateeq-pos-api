@@ -81,17 +81,27 @@ router.get('/:storeid/:datefrom/:dateto/:shift', passport, (request, response, n
                 $gte: new Date(datefrom),
                 $lte: new Date(dateto)
             },
-            shift : parseInt(shift),
             'isVoid' : false
         };
+
+
+        
+        var filterShift = {};
+        if (shift != 0) {
+            filterShift = {
+                shift : parseInt(shift)
+            };
+        } 
+
         query.filter = {
             '$and': [
                 query.filter,
-                filter
+                filter,
+                filterShift
             ]
         }; 
                  
-        manager.read(query)
+        manager.readAll(query)
             .then(docs => {
                 var result = resultFormatter.ok(apiVersion, 200, docs.data);
                 delete docs.data;
